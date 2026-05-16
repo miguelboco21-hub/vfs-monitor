@@ -56,7 +56,7 @@ async function sendEmail() {
 }
 
 // SERVIDOR HTTP para o Railway não encerrar o processo
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 http.createServer((req, res) => {
   res.writeHead(200);
   res.end(`VFS Monitor ativo. Scans: ${scanCount}`);
