@@ -2,13 +2,14 @@ const TelegramBot = require('node-telegram-bot-api');
 const nodemailer = require('nodemailer');
 const cron = require('node-cron');
 const axios = require('axios');
+const http = require('http'); // <-- ADICIONADO
 
 const CONFIG = {
-  TELEGRAM_TOKEN: '8519128033:AAGXuuGLY_Fyyk4scteq3ut9bblo-33bu1g',
-  TELEGRAM_CHAT_ID: '6334476401',
-  EMAIL_USER: 'miguelboco21@gmail.com',
-  EMAIL_PASS: 'ipjx jjug vvfq dqla',
-  EMAIL_TO: 'miguelboco21@gmail.com',
+  TELEGRAM_TOKEN: process.env.TELEGRAM_TOKEN || '8519128033:AAGXuuGLY_Fyyk4scteq3ut9bblo-33bu1g',
+  TELEGRAM_CHAT_ID: process.env.TELEGRAM_CHAT_ID || '6334476401',
+  EMAIL_USER: process.env.EMAIL_USER || 'miguelboco21@gmail.com',
+  EMAIL_PASS: process.env.EMAIL_PASS || 'ipjx jjug vvfq dqla',
+  EMAIL_TO: process.env.EMAIL_TO || 'miguelboco21@gmail.com',
   CHECK_INTERVAL_MINUTES: 1,
   VFS_URL: 'https://visa.vfsglobal.com/prt/pt/prt/book-an-appointment',
 };
@@ -53,6 +54,13 @@ async function sendEmail() {
     console.log('Email enviado!');
   } catch(e) { console.log('Email erro:', e.message); }
 }
+
+// SERVIDOR HTTP para o Railway não encerrar o processo
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+  res.writeHead(200);
+  res.end(`VFS Monitor ativo. Scans: ${scanCount}`);
+}).listen(PORT, () => console.log(`Servidor HTTP na porta ${PORT}`));
 
 async function main() {
   console.log('VFS Monitor iniciado!');
